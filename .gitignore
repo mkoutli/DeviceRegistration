@@ -3,4 +3,4 @@ target/**
 
 # Except war file
 
-!target/SiteWhereAdapter-0.0.1-SNAPSHOT.war
+!target/Registration-0.0.1-SNAPSHOT.war
