@@ -16,22 +16,22 @@ public static class DeviceInfo extends RegInfo{
 
 		@SerializedName("id")
 		@Expose
-		private Integer id;
+		private String id;
 	
+		DeviceInfo(){}
 		
-		
-		DeviceInfo(Integer id, String name, String type, String address, String password, String manufacturer,
+		DeviceInfo(String id, String name, String type, String address, String password, String manufacturer,
 				String model) {
 			super(name, type, address, password, manufacturer, model);
 			this.id = id;
 			
 		}
 		
-		public Integer getId() {
+		public String getid() {
 			return id;
 		}
 
-		public void setID(int id) {
+		public void setid(String id) {
 			this.id = id;
 		}
 		

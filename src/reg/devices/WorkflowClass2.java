@@ -15,13 +15,13 @@ public class WorkflowClass2 {
 		
 		@SerializedName("id")
 		@Expose
-		private Integer id;
+		private String id;
 		
-		public Integer getId() {
+		public String getId() {
 			return id;
 		}
 
-		public void setId(int id) {
+		public void setId(String id) {
 			this.id = id;
 		}
 		
@@ -29,7 +29,7 @@ public class WorkflowClass2 {
 			super();
 		}
 
-		UpInfo(Integer id, String name, String type, String address, String password, String manufacturer, String model) {
+		UpInfo(String id, String name, String type, String address, String password, String manufacturer, String model) {
 			super(name, type, address, password, manufacturer, model);
 			this.id = id;
 		}

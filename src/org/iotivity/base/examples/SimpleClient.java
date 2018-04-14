@@ -57,7 +57,7 @@ public class SimpleClient implements OcPlatform.OnResourceFoundListener, OcResou
 	private Device mDevice = new Device();
 	// private String oid = "smartplug";
 	// private String aid = "lightOnOff";
-	private static Integer id = 0;
+	private static String id = "";
 	private static String name = "";
 	private static String type = "";
 	private static String address = "";
@@ -97,6 +97,7 @@ public class SimpleClient implements OcPlatform.OnResourceFoundListener, OcResou
 		try {
 			msg("Finding all resources..");
 			String requestUri = OcPlatform.WELL_KNOWN_QUERY;
+			
 			// + "?rt=oic.r.switch.binary";
 			// + "rt=oic.r.sensor.threeaxis";
 			OcPlatform.findResource("", requestUri, EnumSet.of(OcConnectivityType.CT_DEFAULT), client);
@@ -153,24 +154,63 @@ public class SimpleClient implements OcPlatform.OnResourceFoundListener, OcResou
 			return;
 		}
 		// Get the resource URI
-		String resourceUri = ocResource.getUri();
-		// Get the resource host address
-		String hostAddress = ocResource.getHost();
-		msg("\tURI of the resource: " + resourceUri);
-		msg("\tHost address of the resource: " + hostAddress);
-		// Get the resource types
-		msg("\tList of resource types: ");
-		for (String resourceType : ocResource.getResourceTypes()) {
-			msg("\t\t" + resourceType);
-		}
-		msg("\tList of resource interfaces:");
-		for (String resourceInterface : ocResource.getResourceInterfaces()) {
-			msg("\t\t" + resourceInterface);
-		}
-		msg("\tList of resource connectivity types:");
-		for (OcConnectivityType connectivityType : ocResource.getConnectivityTypeSet()) {
-			msg("\t\t" + connectivityType);
-		}
+        String resourceUri = ocResource.getUri();
+        // Get the resource host address
+        String hostAddress = ocResource.getHost();
+        msg("\tURI of the resource: " + resourceUri);
+        msg("\tHost address of the resource: " + hostAddress);
+        // Get the resource types
+        msg("\tList of resource types: ");
+        for (String resourceType : ocResource.getResourceTypes()) {
+            msg("\t\t" + resourceType);
+        }
+        msg("\tList of resource interfaces:");
+        for (String resourceInterface : ocResource.getResourceInterfaces()) {
+            msg("\t\t" + resourceInterface);
+        }
+        // Get Resource current host
+        msg("\tHost of resource: ");
+        msg("\t\t" +  hostAddress);
+        // Get Resource Endpoint Infomation
+        msg("\tList of resource endpoints: ");
+        for(String resourceEndpoint : ocResource.getAllHosts())
+        {
+            msg("\t\t" + resourceEndpoint);
+        }
+
+        OcConnectivityType TRANSPORT_TYPE_TO_USE = OcConnectivityType.CT_ADAPTER_IP;
+
+        // If resource is found from ip based adapter.
+        if (hostAddress.contains("coap://") ||
+            hostAddress.contains("coaps://") ||
+            hostAddress.contains("coap+tcp://") ||
+            hostAddress.contains("coaps+tcp://"))
+        {
+            for(String resourceEndpoint : ocResource.getAllHosts())
+            {
+                if (!resourceEndpoint.equals(hostAddress) &&
+                    !resourceEndpoint.contains("coap+rfcomm"))
+                {
+                    String newHost = resourceEndpoint;
+                    if (newHost.contains("tcp"))
+                    {
+                        TRANSPORT_TYPE_TO_USE = OcConnectivityType.CT_ADAPTER_TCP;
+                    }
+                    else
+                    {
+                        TRANSPORT_TYPE_TO_USE = OcConnectivityType.CT_ADAPTER_IP;
+                    }
+                    // Change Resource host if another host exists
+                    msg("\tChange host of resource endpoints");
+                    msg("\t\t" + "Current host is " + ocResource.setHost(newHost));
+                    break;
+                }
+            }
+        }
+        msg("\tList of resource connectivity types:");
+        for (OcConnectivityType connectivityType : ocResource.getConnectivityTypeSet()) {
+            msg("\t\t" + connectivityType);
+        }
 		printLine();
 
 		if (!crudVerb.equalsIgnoreCase("discover")) {
@@ -204,6 +244,7 @@ public class SimpleClient implements OcPlatform.OnResourceFoundListener, OcResou
 	public synchronized void onFindResourceFailed(Throwable throwable, String uri) {
 		msg("findResource request has failed");
 		msgError(TAG, throwable.toString());
+		System.out.println(uri);
 	}
 
 	/**
@@ -617,8 +658,8 @@ public class SimpleClient implements OcPlatform.OnResourceFoundListener, OcResou
 
 	private final static String TAG = SimpleClient.class.getSimpleName();
 
-	public static void callPost(Integer i, String n, String t, String a, String p, String man, String mod) {
-		if (i != null && i != 0) {
+	public static void callPost(String i, String n, String t, String a, String p, String man, String mod) {
+		if (i != null) {
 			id = i;
 		} else {
 			System.out.println("Id is " + i + ", can't register device");
@@ -667,8 +708,8 @@ public class SimpleClient implements OcPlatform.OnResourceFoundListener, OcResou
 
 	}
 
-	public static void callPut(Integer i, String n, String t, String a, String p, String man, String mod) {
-		if (i != null && i != 0) {
+	public static void callPut(String i, String n, String t, String a, String p, String man, String mod) {
+		if (i != null) {
 			id = i;
 		} else {
 			System.out.println("Id is " + i + ", can't update device");
@@ -716,8 +757,8 @@ public class SimpleClient implements OcPlatform.OnResourceFoundListener, OcResou
 		}
 	}
 	
-	public static void callDelete(Integer i) {
-		if (i != null && i != 0) {
+	public static void callDelete(String i) {
+		if (i != null) {
 			id = i;
 		} else {
 			System.out.println("Id is " + i + ", can't delete device");

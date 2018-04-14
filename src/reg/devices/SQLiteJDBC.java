@@ -24,10 +24,10 @@ public class SQLiteJDBC {
  * @param manufacturer
  * @param model
  */
-public static Integer insert(String name, String type, String address, String password, String manufacturer, String model) {
+public static void insert(String id, String name, String type, String address, String password, String manufacturer, String model) {
       Connection c = null;
       Statement stmt = null;
-      int row = 0;
+      //int row = 0;
       
       try {
          Class.forName("org.sqlite.JDBC");
@@ -43,12 +43,12 @@ public static Integer insert(String name, String type, String address, String pa
 
          stmt = c.createStatement();
          
-         String sql = "INSERT INTO ALL_DEVICES (name, type, address, password, manufacturer, model ) " +
-                        "VALUES ( \'" + name + "\', \'" +  type + "\', \'" + address + "\', \'" + password + "\', \'" + manufacturer + "\', \'" + model + "\' );"; 
+         String sql = "INSERT INTO ALL_DEVICES (id, name, type, address, password, manufacturer, model ) " +
+                        "VALUES ( \'" + id + "\', \'" + name + "\', \'" +  type + "\', \'" + address + "\', \'" + password + "\', \'" + manufacturer + "\', \'" + model + "\' );"; 
          stmt.executeUpdate(sql);
          // get key
-         row = stmt.getGeneratedKeys().getInt(1);
-         System.out.println(row);
+         //row = stmt.getGeneratedKeys().getInt(1);
+         //System.out.println(row);
 
          stmt.close();
          c.commit();
@@ -58,13 +58,13 @@ public static Integer insert(String name, String type, String address, String pa
          //System.exit(0);
       }
       System.out.println("Records created successfully");
-      return row;
+      //return row;
    }
    
    /**
  * @param ID: the device ID
  */
-public static void delete(int ID) {
+public static void delete(String ID) {
 	   Connection c = null;
 	      Statement stmt = null;
 	      
@@ -75,7 +75,7 @@ public static void delete(int ID) {
 	         System.out.println("Opened database successfully");
 
 	         stmt = c.createStatement();
-	         String sql = "DELETE from ALL_DEVICES where ID=" + ID + ";";
+	         String sql = "DELETE from ALL_DEVICES where ID LIKE \'" + ID + "\';";
 	         stmt.executeUpdate(sql);
 	         c.commit();
 
@@ -84,7 +84,7 @@ public static void delete(int ID) {
 	         while ( rs.next() ) {
 	         String address = rs.getString("address");
 	         String  name = rs.getString("name");
-	         int  id = rs.getInt("ID");
+	         String  id = rs.getString("ID");
 	         
 	         
 	         System.out.println( "address = " + address );
@@ -139,6 +139,14 @@ public static void update(UpInfo info) {
 	        	 count++;
 	        	 hmap.put("model", info.getModel());
 	         }
+	         if (info.getAddress() != null) {
+	        	 count++;
+	        	 hmap.put("address", info.getAddress());
+	         }
+	         if (info.getType() != null) {
+	        	 count++;
+	        	 hmap.put("type", info.getType());
+	         }
 	        	 
 	         
 	         if (count>0) {
@@ -158,7 +166,8 @@ public static void update(UpInfo info) {
 	        	 
 		         
 		         sql += "WHERE\n" + 
-		         		"             ID = " + info.getId() + ";";
+		         		"             ID LIKE \'" + info.getId() + "\';";
+		         
 		         stmt = c.createStatement();
 		         
 		         stmt.executeUpdate(sql);
@@ -200,7 +209,7 @@ public static ArrayList<DeviceInfo> getAllDevices() {
 	         String  password = rs.getString("password");
 	         String  manufacturer = rs.getString("manufacturer");
 	         String  model = rs.getString("model");
-	         int  id = rs.getInt("ID");
+	         String  id = rs.getString("ID");
 	         
 	         
 	         System.out.println( "address = " + address );
@@ -232,8 +241,9 @@ public static ArrayList<DeviceInfo> getAllDevices() {
 	         System.out.println("Opened database successfully");
 
 	         stmt = c.createStatement();
+	         // name: ALL_DEVICES
 	         String sql = "CREATE TABLE IF NOT EXISTS " + name +  " " +
-	                        "(ID INTEGER PRIMARY KEY," +
+	                        "(ID TEXT PRIMARY KEY," +
 	                        " name           TEXT    NOT NULL, " + 
 	                        " type            TEXT     NOT NULL, " + 
 	                        " address        TEXT     NOT NULL,  " + 
@@ -250,13 +260,14 @@ public static ArrayList<DeviceInfo> getAllDevices() {
 	      System.out.println("Table with name " + name + " was created successfully");
 	   }
    
-   public static void deleteTable(String name) {
+   public static void deleteTable(String name, String location) {
 	      Connection c = null;
 	      Statement stmt = null;
 	      
 	      try {
 	         Class.forName("org.sqlite.JDBC");
-	         c = DriverManager.getConnection("jdbc:sqlite:/home/mkoutli/Documents/iotivity_devices");
+	         c = DriverManager.getConnection("jdbc:sqlite:" + location + "/iotivity_devices");
+	         //c = DriverManager.getConnection("jdbc:sqlite:/home/mkoutli/Documents/iotivity_devices");
 	         System.out.println("Opened database successfully");
 
 	         stmt = c.createStatement();

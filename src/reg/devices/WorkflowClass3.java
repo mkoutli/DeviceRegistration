@@ -13,15 +13,15 @@ public static class DelInfo {
 		
 		@SerializedName("id")
 		@Expose
-		private Integer id;
+		private String id;
 		
 		
 		
-		public Integer getId() {
+		public String getId() {
 		return id;
 		}
 
-		public void setId(int id) {
+		public void setId(String id) {
 		this.id = id;
 		}
 

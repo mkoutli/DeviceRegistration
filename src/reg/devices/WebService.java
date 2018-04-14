@@ -16,8 +16,8 @@ import reg.devices.WorkflowClass2.ResponseUpdate;
 import reg.devices.WorkflowClass2.UpInfo;
 import reg.devices.WorkflowClass3.DelInfo;
 import reg.devices.WorkflowClass3.ResponseDelete;
+import reg.devices.WorkflowClass4.DeviceInfo;
 import reg.devices.WorkflowClass4.ResponseGet;
-import reg.devices.WorkflowClass.RegInfo;
 
 
 @Path("/service")
@@ -28,7 +28,7 @@ public class WebService {
     @Path("/devices")
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerDevice(RegInfo info) throws Exception {
+    public Response registerDevice(DeviceInfo info) throws Exception {
 		WorkflowClass newClass = new WorkflowClass();
         Response response = newClass.parseResponse(info);
         return response;
@@ -78,8 +78,8 @@ public class WebService {
     @Path("/table")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteTable(@FormParam("name") String name) throws Exception {
-		SQLiteJDBC.deleteTable(name);
+    public String deleteTable(@FormParam("name") String name, @FormParam("location") String location) throws Exception {
+		SQLiteJDBC.deleteTable(name, location);
 		return "Table with name " + name + " is deleted";
     }
 	

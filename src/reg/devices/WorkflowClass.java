@@ -5,6 +5,8 @@ import org.iotivity.base.examples.SimpleClient;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import reg.devices.WorkflowClass4.DeviceInfo;
+
 public class WorkflowClass {
 
 	//static String DIR = System.getProperty("java.library.path");
@@ -122,10 +124,10 @@ public class WorkflowClass {
 	}
 	
 	
-	public Response parseResponse(RegInfo info){
+	public Response parseResponse(DeviceInfo info){
 		//System.out.println(DIR);
-		Integer id = SQLiteJDBC.insert(info.getName(), info.getType(), info.getAddress(), info.getPassword(), info.getManufacturer(), info.getModel());
-		SimpleClient.callPost(id, info.getName(), info.getType(), info.getAddress(), info.getPassword(), info.getManufacturer(), info.getModel());
+		//SQLiteJDBC.insert(info.getid(), info.getName(), info.getType(), info.getAddress(), info.getPassword(), info.getManufacturer(), info.getModel());
+		SimpleClient.callPost(info.getid(), info.getName(), info.getType(), info.getAddress(), info.getPassword(), info.getManufacturer(), info.getModel());
 		return new Response("The device with name: " + info.getName() + " was registered.");
 	}
 }

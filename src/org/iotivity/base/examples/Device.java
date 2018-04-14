@@ -14,7 +14,7 @@ public class Device {
     public static final String MODEL_KEY =  "model";
 
 
-    private Integer mId;
+    private String mId;
     private String mName;
     private String mType;
     private String mAddress;
@@ -24,7 +24,7 @@ public class Device {
 
 
     public Device() {
-        mId = 0;
+        mId = "";
     	mName = "";
         mType = "";
         mAddress = "";
@@ -56,11 +56,11 @@ public class Device {
         return rep;
     }
 
-    public Integer getId() {
+    public String getId() {
         return mId;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.mId = id;
     }
     
